@@ -9,12 +9,32 @@ export class AuthController {
 
 	public constructor(private unitOfWork: UnitOfWork) { }
 
+	public preSignUp: TriggerCognitoHandler = async (event: TriggerCognitoEvent) => {
+		// Perform any pre-sign-up checks
+		try {
+			return event;
+		} catch (err) {
+			return err;
+		}
+	}
+
 	public postSignUp: TriggerCognitoHandler = async (event: TriggerCognitoEvent) => {
 		const cognitoUser: { [key: string]: string } = event.request.userAttributes;
 		const user: Partial<User> = {
 			email : cognitoUser.email,
 			confirmed: false
 		};
+
+		console.log(event);
+
+		event.response.emailSubject = 'Welcome to MoneyShare';
+		event.response.emailMessage =
+			`Hi ${cognitoUser.given_name},
+			Welcome to MoneyShare!<br><br>
+			Thanks for signing up.<br><br>
+			Use this link to confirm your account:
+			<a href="http://localhost:4200/confirm/${cognitoUser.email}/${event.request.codeParameter}">Confirm</a><br>
+			- MoneyShare`;
 
 		try {
 			user.userType = 'User';
@@ -25,15 +45,7 @@ export class AuthController {
 
 			return event;
 		} catch (err) {
-			return err;
-		}
-	}
-
-	public preSignUp: TriggerCognitoHandler = async (event: TriggerCognitoEvent) => {
-		// Perform any pre-sign-up checks
-		try {
-			return event;
-		} catch (err) {
+			console.log(err);
 			return err;
 		}
 	}
