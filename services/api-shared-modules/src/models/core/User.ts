@@ -1,6 +1,6 @@
 import { DynamoDbItem } from '../DynamoDBItem';
 import { attribute } from '@aws/dynamodb-data-mapper-annotations';
-import { User, UserConnection, UserType } from '../../types';
+import { User, UserConnection, UserType } from '@moneyshare/common-types';
 
 export class UserItem extends DynamoDbItem implements User {
 

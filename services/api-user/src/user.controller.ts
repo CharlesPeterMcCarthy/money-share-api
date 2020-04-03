@@ -8,9 +8,9 @@ import {
 	UnitOfWork,
 	SharedFunctions,
 	UserItem,
-	LastEvaluatedKey,
-	User
+	LastEvaluatedKey
 } from '../../api-shared-modules/src';
+import { User } from '@moneyshare/common-types';
 
 export class UserController {
 

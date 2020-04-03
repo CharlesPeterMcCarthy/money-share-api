@@ -1,4 +1,4 @@
-import { Subscription } from '../../types';
+import { Subscription } from '@moneyshare/common-types';
 
 export interface ISubscriptionRepository {
 	getAll(): Promise<Subscription[]>;

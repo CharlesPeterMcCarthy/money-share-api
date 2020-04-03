@@ -1,6 +1,7 @@
 import API from '../lib/api';
-import { WsPostResult, UnitOfWork, Subscription } from '../../../api-shared-modules/src';
+import { WsPostResult, UnitOfWork } from '../../../api-shared-modules/src';
 import { CollectionItem, PublishType, SubscriptionPayload } from '../../../api-shared-modules/src/types/websockets';
+import { Subscription } from '@moneyshare/common-types';
 
 export interface PublicationData {
 	subscriptionName: string; // driver-applications, user/profile, etc

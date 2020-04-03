@@ -1,4 +1,5 @@
-import { LastEvaluatedKey, User, UserItem } from '../..';
+import { LastEvaluatedKey, UserItem } from '../..';
+import { User } from '@moneyshare/common-types';
 
 export interface IUserRepository {
 	getAll(lastEvaluatedKey?: LastEvaluatedKey): Promise<{ users: User[]; lastEvaluatedKey: Partial<UserItem> }>;

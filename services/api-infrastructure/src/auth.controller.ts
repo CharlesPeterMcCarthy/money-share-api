@@ -1,9 +1,9 @@
 import {
 	UnitOfWork,
 	TriggerCognitoEvent,
-	TriggerCognitoHandler,
-	User
+	TriggerCognitoHandler
 } from '../../api-shared-modules/src';
+import { User } from '@moneyshare/common-types';
 
 export class AuthController {
 

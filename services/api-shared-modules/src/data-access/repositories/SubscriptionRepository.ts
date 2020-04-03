@@ -9,7 +9,7 @@ import {
 	EqualityExpressionPredicate,
 	equals
 } from '@aws/dynamodb-expressions';
-import { Subscription } from '../../types';
+import { Subscription } from '@moneyshare/common-types';
 
 export class SubscriptionRepository extends Repository implements ISubscriptionRepository {
 

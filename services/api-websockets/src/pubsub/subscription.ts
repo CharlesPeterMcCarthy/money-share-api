@@ -1,4 +1,5 @@
-import { Subscription, UnitOfWork } from '../../../api-shared-modules/src';
+import { UnitOfWork } from '../../../api-shared-modules/src';
+import { Subscription } from '@moneyshare/common-types';
 
 export interface SubscriptionData {
 	subscriptionName: string; // driver-applications, user/profile, etc

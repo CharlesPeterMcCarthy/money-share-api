@@ -1,6 +1,6 @@
 import { DynamoDbItem } from '../DynamoDBItem';
 import { attribute } from '@aws/dynamodb-data-mapper-annotations';
-import { Subscription } from '../../types';
+import { Subscription } from '@moneyshare/common-types';
 
 export class SubscriptionItem extends DynamoDbItem implements Subscription {
 

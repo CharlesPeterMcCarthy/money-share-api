@@ -2,7 +2,8 @@ import { UserItem } from '../../models/core';
 import { QueryOptions, QueryPaginator } from '@aws/dynamodb-data-mapper';
 import { Repository } from './Repository';
 import { QueryKey } from '../interfaces';
-import { LastEvaluatedKey, User } from '../../types';
+import { LastEvaluatedKey } from '../../types';
+import { User } from '@moneyshare/common-types';
 
 export class UserRepository extends Repository {
 
