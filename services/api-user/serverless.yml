@@ -29,7 +29,6 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
-        - cognito-idp:AdminCreateUser
       Resource:
         - '*'
 
@@ -44,6 +43,14 @@ functions:
       - http:
           path: /users/all
           method: put
+          cors: true
+          authorizer: aws_iam
+  getCurrentUser:
+    handler: src/handler.getCurrentUser
+    events:
+      - http:
+          path: /users/current
+          method: get
           cors: true
           authorizer: aws_iam
   getUserById:

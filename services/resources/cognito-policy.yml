@@ -2,7 +2,7 @@ Resources:
   CognitoAuthorizedApiPolicy:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: prod-CognitoAuthorizedApiPolicy
+      PolicyName: ${self:custom.projectName}-CognitoAuthorizedApiPolicy
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -21,4 +21,4 @@ Resources:
                   - 'Fn::ImportValue': ${self:custom.stage}-${self:custom.projectName}-ApiGatewayRestApiId
                   - '/*'
       Roles:
-        - 'Fn::ImportValue': CognitoAuthRole
+        - 'Fn::ImportValue': CognitoAuthRole-${self:custom.projectName}

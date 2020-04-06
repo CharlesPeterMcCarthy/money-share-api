@@ -35,4 +35,7 @@ export class UserItem extends DynamoDbItem implements User {
 	@attribute()
 	public connections: UserConnection[];
 
+	@attribute()
+	public accountBalance: number;
+
 }

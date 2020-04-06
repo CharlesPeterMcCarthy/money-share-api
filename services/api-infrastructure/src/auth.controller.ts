@@ -20,12 +20,12 @@ export class AuthController {
 
 	public postSignUp: TriggerCognitoHandler = async (event: TriggerCognitoEvent) => {
 		const cognitoUser: { [key: string]: string } = event.request.userAttributes;
+
 		const user: Partial<User> = {
 			email : cognitoUser.email,
-			confirmed: false
+			confirmed: false,
+			accountBalance: 0
 		};
-
-		console.log(event);
 
 		event.response.emailSubject = 'Welcome to MoneyShare';
 		event.response.emailMessage =
