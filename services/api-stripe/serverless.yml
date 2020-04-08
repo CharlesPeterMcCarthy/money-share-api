@@ -1,4 +1,4 @@
-service: api-deposit-service-${self:custom.projectName}
+service: api-stripe-service-${self:custom.projectName}
 frameworkVersion: ">=1.44.0"
 
 custom:
@@ -41,7 +41,7 @@ functions:
     handler: src/handler.createPaymentIntent
     events:
       - http:
-          path: /stripe/paymentIntent/create
+          path: /stripe/payment-intent/create/{amount}
           method: get
           cors: true
           authorizer: aws_iam

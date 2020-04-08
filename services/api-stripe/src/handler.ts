@@ -10,4 +10,4 @@ const stripe: Stripe = new Stripe(STRIPE_API_KEY, {
 const unitOfWork: UnitOfWork = new UnitOfWork();
 const controller: StripeController = new StripeController(unitOfWork, stripe);
 
-export const getAllUsers: ApiHandler = controller.createPaymentIntent;
+export const createPaymentIntent: ApiHandler = controller.createPaymentIntent;

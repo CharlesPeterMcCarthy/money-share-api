@@ -23,7 +23,9 @@ export class StripeController {
 			return ResponseBuilder.badRequest(ErrorCode.BadRequest, 'Invalid request parameters');
 		const amount: number = parseInt(event.pathParameters.amount, 10);
 
-		if (!amount || amount < 10) return ResponseBuilder.badRequest(ErrorCode.BadRequest, 'Minimum 10 Euro Deposit');
+		console.log(amount);
+
+		if (!amount || amount < 1000) return ResponseBuilder.badRequest(ErrorCode.BadRequest, 'Minimum 10 Euro Deposit');
 
 		try {
 			const userId: string = SharedFunctions.getUserIdFromAuthProvider(event);
@@ -36,7 +38,7 @@ export class StripeController {
 				metadata: { integration_check: 'accept_a_payment' }
 			});
 
-			return ResponseBuilder.ok({ paymentIntent });
+			return ResponseBuilder.ok({ clientSecret: paymentIntent.client_secret });
 		} catch (err) {
 			return ResponseBuilder.internalServerError(err, err.message);
 		}
