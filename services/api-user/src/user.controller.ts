@@ -38,13 +38,10 @@ export class UserController {
 	}
 
 	public getCurrentUser: ApiHandler = async (event: ApiEvent, context: ApiContext): Promise<ApiResponse> => {
-		console.log('Try');
 		try {
 			const userId: string = SharedFunctions.getUserIdFromAuthProvider(event);
-			console.log(userId);
 
 			const user: User = await this.unitOfWork.Users.getById(userId);
-			console.log(user);
 			if (!user) return ResponseBuilder.notFound(ErrorCode.InvalidId, 'User not found');
 
 			return ResponseBuilder.ok({ user });

@@ -3,3 +3,5 @@ export const WEBSOCKET_ENDPOINT: string = process.env.IS_OFFLINE ?
 	'{{ LIVE_WEBSOCKET_ENDPOINT }}';
 
 export const USER_POOL_ID: string = '{{ COGNITO_USER_POOL_ID }}';
+
+export const STRIPE_API_KEY: string = '{{ STRIPE_API_KEY }}';
