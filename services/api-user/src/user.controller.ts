@@ -10,7 +10,7 @@ import {
 	UserItem,
 	LastEvaluatedKey
 } from '../../api-shared-modules/src';
-import { User } from '@moneyshare/common-types';
+import { PaymentIntent, User } from '@moneyshare/common-types';
 
 export class UserController {
 
@@ -42,7 +42,7 @@ export class UserController {
 			const userId: string = SharedFunctions.getUserIdFromAuthProvider(event);
 
 			const user: User = await this.unitOfWork.Users.getById(userId);
-			if (!user) return ResponseBuilder.notFound(ErrorCode.InvalidId, 'User not found');
+			if (!user) return ResponseBuilder.notFound(ErrorCode.InvalidId, 'User Not Found');
 
 			return ResponseBuilder.ok({ user });
 		} catch (err) {
@@ -57,7 +57,7 @@ export class UserController {
 		try {
 
 			const user: User = await this.unitOfWork.Users.getById(userId);
-			if (!user) return ResponseBuilder.notFound(ErrorCode.InvalidId, 'User not found');
+			if (!user) return ResponseBuilder.notFound(ErrorCode.InvalidId, 'User Not Found');
 
 			return ResponseBuilder.ok({ user });
 		} catch (err) {
@@ -73,10 +73,35 @@ export class UserController {
 		try {
 			const userId: string = SharedFunctions.getUserIdFromAuthProvider(event);
 			const result: User = await this.unitOfWork.Users.update(userId, { ...user });
-			if (!result) return ResponseBuilder.notFound(ErrorCode.InvalidId, 'User not found');
+			if (!result) return ResponseBuilder.notFound(ErrorCode.InvalidId, 'User Not Found');
 
 			return ResponseBuilder.ok({ user: result });
 		} catch (err) {
+			return ResponseBuilder.internalServerError(err, err.message);
+		}
+	}
+
+	public updateUserBalance: ApiHandler = async (event: ApiEvent, context: ApiContext): Promise<ApiResponse> => {
+		if (!event.body) return ResponseBuilder.badRequest(ErrorCode.BadRequest, 'Invalid request body');
+
+		const data: Partial<PaymentIntent> = JSON.parse(event.body) as Partial<PaymentIntent>;
+
+		try {
+			const userId: string = SharedFunctions.getUserIdFromAuthProvider(event);
+			const user: User = await this.unitOfWork.Users.getById(userId);
+			if (!user) return ResponseBuilder.notFound(ErrorCode.InvalidId, 'User Not Found');
+
+			const paymentIntent: PaymentIntent = await this.unitOfWork.PaymentIntents.complete(data.clientSecret, userId);
+			if (!paymentIntent) return ResponseBuilder.notFound(ErrorCode.InvalidId, 'Unable to update Account Balance');
+
+			const updateAmount: number = Number(paymentIntent.amount);
+
+			user.accountBalance = (user.accountBalance || 0) + updateAmount;
+			await this.unitOfWork.Users.update(user.userId, user);
+
+			return ResponseBuilder.ok({ });
+		} catch (err) {
+			console.log(err);
 			return ResponseBuilder.internalServerError(err, err.message);
 		}
 	}

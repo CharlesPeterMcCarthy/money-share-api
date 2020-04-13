@@ -69,6 +69,14 @@ functions:
           method: put
           cors: true
           authorizer: aws_iam
+  updateUserBalance:
+    handler: src/handler.updateUserBalance
+    events:
+      - http:
+          path: /users/update-balance
+          method: put
+          cors: true
+          authorizer: aws_iam
   deleteUser:
     handler: src/handler.deleteUser
     events:

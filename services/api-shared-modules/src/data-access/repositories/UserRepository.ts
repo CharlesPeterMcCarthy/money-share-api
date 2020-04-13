@@ -57,6 +57,7 @@ export class UserRepository extends Repository {
 			sk: `user#${userId}`,
 			entity: 'user',
 			confirmed: false,
+			accountBalance: 0,
 			times: {
 				createdAt: date
 			},
