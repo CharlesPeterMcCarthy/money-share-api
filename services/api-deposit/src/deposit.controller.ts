@@ -8,7 +8,7 @@ import {
 	UnitOfWork,
 	SharedFunctions
 } from '../../api-shared-modules/src';
-import { Deposit, PaymentIntent, Transaction, TransactionType, User } from '@moneyshare/common-types';
+import { Deposit, PaymentIntent, Transaction, User } from '@moneyshare/common-types';
 import Stripe from 'stripe';
 
 export class DepositController {
@@ -72,9 +72,9 @@ export class DepositController {
 			const dep: Deposit = await this.unitOfWork.Deposits.create(userId, deposit);
 
 			const transaction: Partial<Transaction> = {
-				type: TransactionType.DEPOSIT,
+				type: 'DEPOSIT',
 				amount,
-				text: `You withdrew €${(amount / 100).toFixed(2)}`,
+				text: `You deposited €${(amount / 100).toFixed(2)}`,
 				accessKey: {
 					pk: dep.pk,
 					sk: dep.sk
