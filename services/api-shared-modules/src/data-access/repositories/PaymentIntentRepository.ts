@@ -20,7 +20,7 @@ export class PaymentIntentRepository extends Repository {
 			pk: `paymentIntent#${paymentIntent.client_secret}`,
 			sk: `user#${userId}`,
 			entity: 'paymentIntent',
-			id: paymentIntent.id,
+			intentId: paymentIntent.id,
 			clientSecret: paymentIntent.client_secret,
 			amount: paymentIntent.amount,
 			transactionComplete: false,

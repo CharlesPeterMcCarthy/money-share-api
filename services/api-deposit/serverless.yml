@@ -1,4 +1,4 @@
-service: api-stripe-service-${self:custom.projectName}
+service: api-deposit-service-${self:custom.projectName}
 frameworkVersion: ">=1.44.0"
 
 custom:
@@ -37,12 +37,20 @@ plugins:
   - serverless-webpack
 
 functions:
-  createPaymentIntent:
-    handler: src/handler.createPaymentIntent
+  depositBegin:
+    handler: src/handler.depositBegin
     events:
       - http:
-          path: /stripe/payment-intent/create/{amount}
-          method: get
+          path: /deposit/{amount}
+          method: post
+          cors: true
+          authorizer: aws_iam
+  depositComplete:
+    handler: src/handler.depositComplete
+    events:
+      - http:
+          path: /deposit/complete
+          method: put
           cors: true
           authorizer: aws_iam
 
