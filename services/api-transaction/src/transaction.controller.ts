@@ -10,6 +10,7 @@ import {
 	TransactionItem, SharedFunctions
 } from '../../api-shared-modules/src';
 import { Transaction, User } from '@moneyshare/common-types';
+import { GetAllTransactionsData } from './interfaces';
 
 export class TransactionController {
 
@@ -19,8 +20,10 @@ export class TransactionController {
 
 	public getAllTransactions: ApiHandler = async (event: ApiEvent, context: ApiContext): Promise<ApiResponse> => {
 		let lastEvaluatedKey: LastEvaluatedKey;
-		if (event.body) {
-			const { pk, sk, sk2, entity}: LastEvaluatedKey = JSON.parse(event.body) as LastEvaluatedKey;
+		const data: GetAllTransactionsData = JSON.parse(event.body);
+
+		if (data && data.lastEvaluatedKey) {
+			const { pk, sk, sk2, entity }: LastEvaluatedKey = data.lastEvaluatedKey;
 			lastEvaluatedKey = {
 				pk,
 				sk,
@@ -28,6 +31,7 @@ export class TransactionController {
 				entity
 			};
 		}
+
 		try {
 			const userId: string = SharedFunctions.getUserIdFromAuthProvider(event);
 			const user: User = await this.unitOfWork.Users.getById(userId);

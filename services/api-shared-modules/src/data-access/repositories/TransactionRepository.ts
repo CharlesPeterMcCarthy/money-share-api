@@ -5,16 +5,17 @@ import { v4 as uuid } from 'uuid';
 import { LastEvaluatedKey } from '../../types';
 import { QueryKey } from '../interfaces';
 import { QueryOptions, QueryPaginator } from '@aws/dynamodb-data-mapper';
+import { beginsWith } from '@aws/dynamodb-expressions';
 
 export class TransactionRepository extends Repository {
 
 	public async getAll(userId: string, lastEvaluatedKey?: LastEvaluatedKey): Promise<{ transactions: Transaction[]; lastEvaluatedKey: Partial<TransactionItem> }> {
 		const keyCondition: QueryKey = {
 			entity: 'transaction',
-			sk: `user#${userId}`
+			sk2: beginsWith(`user#${userId}`)
 		};
 		const queryOptions: QueryOptions = {
-			indexName: 'entity-sk-index',
+			indexName: 'entity-sk2-index',
 			scanIndexForward: false,
 			startKey: lastEvaluatedKey,
 			limit: 10
@@ -43,7 +44,7 @@ export class TransactionRepository extends Repository {
 			transactionId,
 			pk: `transaction#${transactionId}`,
 			sk: `user#${userId}`,
-			sk2: `createdAt#${date}`,
+			sk2: `user#${userId}/createdAt#${date}`,
 			entity: 'transaction',
 			times: {
 				createdAt: date

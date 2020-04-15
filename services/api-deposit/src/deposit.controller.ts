@@ -74,6 +74,7 @@ export class DepositController {
 			const transaction: Partial<Transaction> = {
 				type: 'DEPOSIT',
 				amount,
+				newBalance: user.accountBalance,
 				text: `You deposited €${(amount / 100).toFixed(2)}`,
 				accessKey: {
 					pk: dep.pk,
