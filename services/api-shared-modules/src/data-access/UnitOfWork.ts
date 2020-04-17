@@ -4,10 +4,11 @@ import {
 } from './repositories';
 import {
 	IUserRepository,
-	ISubscriptionRepository, ITransactionRepository, IPaymentIntentRepository, IDepositRepository,
+	ISubscriptionRepository, ITransactionRepository, IPaymentIntentRepository, IDepositRepository, IWithdrawRepository,
 } from './interfaces';
 import { DataMapper } from '@aws/dynamodb-data-mapper';
 import { DynamoDB } from 'aws-sdk';
+import { WithdrawRepository } from './repositories/WithdrawRepository';
 
 export class UnitOfWork {
 
@@ -16,6 +17,7 @@ export class UnitOfWork {
 	public PaymentIntents: IPaymentIntentRepository;
 	public Transactions: ITransactionRepository;
 	public Deposits: IDepositRepository;
+	public Withdrawals: IWithdrawRepository;
 
 	public constructor() {
 		const db: DataMapper = new DataMapper({ client: new DynamoDB({ region: 'eu-west-1' }) });
@@ -25,6 +27,7 @@ export class UnitOfWork {
 		this.PaymentIntents = new PaymentIntentRepository(db);
 		this.Transactions = new TransactionRepository(db);
 		this.Deposits = new DepositRepository(db);
+		this.Withdrawals = new WithdrawRepository(db);
 	}
 
 }

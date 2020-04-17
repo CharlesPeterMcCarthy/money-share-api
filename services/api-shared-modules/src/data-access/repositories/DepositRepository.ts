@@ -12,7 +12,7 @@ export class DepositRepository extends Repository {
 		return this.db.put(Object.assign(new DepositItem(), {
 			depositId,
 			pk: `deposit#${depositId}`,
-			sk: `user#${userId}`,
+			sk: `user#${userId}/createdAt#${date}`,
 			sk2: `createdAt#${date}`,
 			entity: 'deposit',
 			times: {

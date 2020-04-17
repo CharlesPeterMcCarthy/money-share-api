@@ -1,6 +1,6 @@
 import { DynamoDbItem } from '../DynamoDBItem';
 import { attribute } from '@aws/dynamodb-data-mapper-annotations';
-import { Transaction } from '@moneyshare/common-types';
+import { Transaction, TransactionType } from '@moneyshare/common-types';
 
 export class TransactionItem extends DynamoDbItem implements Transaction {
 
@@ -8,7 +8,7 @@ export class TransactionItem extends DynamoDbItem implements Transaction {
 	public transactionId!: string;
 
 	@attribute()
-	public type!: 'DEPOSIT' | 'WITHDRAW' | 'SEND' | 'RECEIVE';
+	public type!: TransactionType;
 
 	@attribute()
 	public text!: string;

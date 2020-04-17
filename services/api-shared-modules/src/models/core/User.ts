@@ -38,4 +38,7 @@ export class UserItem extends DynamoDbItem implements User {
 	@attribute()
 	public accountBalance: number;
 
+	@attribute()
+	public stripeCustomerId: string;
+
 }

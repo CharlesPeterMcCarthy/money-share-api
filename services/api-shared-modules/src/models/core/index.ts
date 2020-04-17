@@ -3,3 +3,4 @@ export { SubscriptionItem } from './Subscription';
 export { PaymentIntentItem } from './PaymentIntent';
 export { TransactionItem } from './Transaction';
 export { DepositItem } from './Deposit';
+export { WithdrawItem } from './Withdraw';

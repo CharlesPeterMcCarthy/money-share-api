@@ -4,10 +4,14 @@ import {
 	TriggerCognitoHandler
 } from '../../api-shared-modules/src';
 import { User } from '@moneyshare/common-types';
+import Stripe from 'stripe';
 
 export class AuthController {
 
-	public constructor(private unitOfWork: UnitOfWork) { }
+	public constructor(
+		private unitOfWork: UnitOfWork,
+		private stripe: Stripe
+	) { }
 
 	public preSignUp: TriggerCognitoHandler = async (event: TriggerCognitoEvent) => {
 		// Perform any pre-sign-up checks
@@ -41,7 +45,29 @@ export class AuthController {
 			user.firstName = cognitoUser.given_name;
 			user.lastName = cognitoUser.family_name;
 
+			const customer: Stripe.Customer = await this.stripe.customers.create({
+				name: `${user.firstName} ${user.lastName}`
+			});
+
+			user.stripeCustomerId = customer.id;
+
 			await this.unitOfWork.Users.createAfterSignUp(cognitoUser.sub, { ...user });
+
+			// const account: Stripe.CustomerSource = await this.stripe.customers.createSource(
+			// 	customer.id,
+			// 	{ source: 'tok_1GYaptJbUq0YkNoHWuekK8Ms' }
+			// );
+			//
+			// console.log(account);
+			//
+			// const transfer: Stripe.Transfer = await this.stripe.transfers.create(
+			// 	{
+			// 		amount: 2500,
+			// 		currency: 'eur',
+			// 		destination: 'acct_1GVhXUJbUq0YkNoH',
+			// 		transfer_group: 'ORDER_95',
+			// 	}
+			// );
 
 			return event;
 		} catch (err) {
