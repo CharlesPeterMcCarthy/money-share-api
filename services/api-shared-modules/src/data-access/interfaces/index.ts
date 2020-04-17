@@ -6,6 +6,7 @@ export { IPaymentIntentRepository } from './IPaymentIntentRepository';
 export { ITransactionRepository } from './ITransactionRepository';
 export { IDepositRepository } from './IDepositRepository';
 export { IWithdrawRepository } from './IWithdrawRepository';
+export { ITransferRepository } from './ITransferRepository';
 
 export interface QueryKey {
 	pk?: string;
