@@ -28,6 +28,10 @@ export class UserController {
 			};
 		}
 		try {
+			const currentUserId: string = SharedFunctions.getUserIdFromAuthProvider(event);
+			const currentUser: User = await this.unitOfWork.Users.getById(currentUserId);
+			if (!currentUser) return ResponseBuilder.notFound(ErrorCode.InvalidId, 'Unauthenticated User');
+
 			const result: { users: User[]; lastEvaluatedKey: Partial<UserItem> } = await this.unitOfWork.Users.getAll(lastEvaluatedKey);
 			if (!result) return ResponseBuilder.notFound(ErrorCode.GeneralError, 'Failed to retrieve Users');
 
@@ -39,12 +43,11 @@ export class UserController {
 
 	public getCurrentUser: ApiHandler = async (event: ApiEvent, context: ApiContext): Promise<ApiResponse> => {
 		try {
-			const userId: string = SharedFunctions.getUserIdFromAuthProvider(event);
+			const currentUserId: string = SharedFunctions.getUserIdFromAuthProvider(event);
+			const currentUser: User = await this.unitOfWork.Users.getById(currentUserId, false);
+			if (!currentUser) return ResponseBuilder.notFound(ErrorCode.InvalidId, 'Unauthenticated User');
 
-			const user: User = await this.unitOfWork.Users.getById(userId);
-			if (!user) return ResponseBuilder.notFound(ErrorCode.InvalidId, 'User Not Found');
-
-			return ResponseBuilder.ok({ user });
+			return ResponseBuilder.ok({ user: currentUser });
 		} catch (err) {
 			return ResponseBuilder.internalServerError(err, err.message);
 		}
@@ -55,8 +58,11 @@ export class UserController {
 		const userId: string = event.pathParameters.userId;
 
 		try {
+			const currentUserId: string = SharedFunctions.getUserIdFromAuthProvider(event);
+			const currentUser: User = await this.unitOfWork.Users.getById(currentUserId);
+			if (!currentUser) return ResponseBuilder.notFound(ErrorCode.InvalidId, 'Unauthenticated User');
 
-			const user: User = await this.unitOfWork.Users.getById(userId);
+			const user: User = await this.unitOfWork.Users.getById(userId, userId !== currentUser.userId);
 			if (!user) return ResponseBuilder.notFound(ErrorCode.InvalidId, 'User Not Found');
 
 			return ResponseBuilder.ok({ user });
@@ -68,29 +74,18 @@ export class UserController {
 	public updateUser: ApiHandler = async (event: ApiEvent, context: ApiContext): Promise<ApiResponse> => {
 		if (!event.body) return ResponseBuilder.badRequest(ErrorCode.BadRequest, 'Invalid request body');
 
-		const user: Partial<User> = JSON.parse(event.body) as Partial<User>;
+		const data: any = JSON.parse(event.body);
+		const user: Partial<User> = data.user;
 
 		try {
-			const userId: string = SharedFunctions.getUserIdFromAuthProvider(event);
-			const result: User = await this.unitOfWork.Users.update(userId, { ...user });
+			const currentUserId: string = SharedFunctions.getUserIdFromAuthProvider(event);
+			const currentUser: User = await this.unitOfWork.Users.getById(currentUserId);
+			if (!currentUser) return ResponseBuilder.notFound(ErrorCode.InvalidId, 'Unauthenticated User');
+
+			const result: User = await this.unitOfWork.Users.update(currentUserId, { ...user });
 			if (!result) return ResponseBuilder.notFound(ErrorCode.InvalidId, 'User Not Found');
 
 			return ResponseBuilder.ok({ user: result });
-		} catch (err) {
-			return ResponseBuilder.internalServerError(err, err.message);
-		}
-	}
-
-	public deleteUser: ApiHandler = async (event: ApiEvent, context: ApiContext): Promise<ApiResponse> => {
-		if (!event.pathParameters || !event.pathParameters.userId) return ResponseBuilder.badRequest(ErrorCode.BadRequest, 'Invalid request parameters');
-
-		const userId: string = event.pathParameters.userId;
-
-		try {
-			const user: User = await this.unitOfWork.Users.delete(userId);
-			if (!user) return ResponseBuilder.notFound(ErrorCode.InvalidId, 'User not found');
-
-			return ResponseBuilder.ok({ user });
 		} catch (err) {
 			return ResponseBuilder.internalServerError(err, err.message);
 		}

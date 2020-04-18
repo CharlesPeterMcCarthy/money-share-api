@@ -1,5 +1,5 @@
 import { UserItem } from '../../models/core';
-import { QueryOptions, QueryPaginator } from '@aws/dynamodb-data-mapper';
+import { GetOptions, QueryOptions, QueryPaginator } from '@aws/dynamodb-data-mapper';
 import { Repository } from './Repository';
 import { QueryKey } from '../interfaces';
 import { LastEvaluatedKey } from '../../types';
@@ -41,11 +41,14 @@ export class UserRepository extends Repository {
 		};
 	}
 
-	public async getById(userId: string): Promise<User> {
+	public async getById(userId: string, otherUser?: boolean): Promise<User> {
+		const options: GetOptions = otherUser ? {
+			projection: [ 'userId', 'firstName', 'lastName', 'avatar', 'userType' ]
+		} : { };
 		return this.db.get(Object.assign(new UserItem(), {
 			pk: `user#${userId}`,
 			sk: `user#${userId}`
-		}));
+		}), options);
 	}
 
 	public async createAfterSignUp(userId: string, toCreate: Partial<User>): Promise<User> {
