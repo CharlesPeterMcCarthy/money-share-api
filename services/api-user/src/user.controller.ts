@@ -91,4 +91,24 @@ export class UserController {
 		}
 	}
 
+	public searchUsersByText: ApiHandler = async (event: ApiEvent, context: ApiContext): Promise<ApiResponse> => {
+		if (!event.pathParameters || !event.pathParameters.searchText)
+			return ResponseBuilder.badRequest(ErrorCode.BadRequest, 'Invalid request parameters');
+
+		const searchText: string = event.pathParameters.searchText;
+
+		try {
+			const userId: string = SharedFunctions.getUserIdFromAuthProvider(event);
+			const user: User = await this.unitOfWork.Users.getById(userId);
+			if (!user) return ResponseBuilder.notFound(ErrorCode.InvalidId, 'User not found');
+
+			const result: { users: User[]; lastEvaluatedKey: Partial<UserItem> } = await this.unitOfWork.Users.searchByText(searchText);
+
+			return ResponseBuilder.ok({ ...result });
+		} catch (err) {
+			console.log(err);
+			return ResponseBuilder.internalServerError(err, err.message);
+		}
+	}
+
 }

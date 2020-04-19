@@ -45,6 +45,14 @@ functions:
           method: put
           cors: true
           authorizer: aws_iam
+  searchUsersByText:
+    handler: src/handler.searchUsersByText
+    events:
+      - http:
+          path: /users/search/{searchText}
+          method: get
+          cors: true
+          authorizer: aws_iam
   getCurrentUser:
     handler: src/handler.getCurrentUser
     events:

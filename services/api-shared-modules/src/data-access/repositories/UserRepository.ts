@@ -4,6 +4,7 @@ import { Repository } from './Repository';
 import { QueryKey } from '../interfaces';
 import { LastEvaluatedKey } from '../../types';
 import { User } from '@moneyshare/common-types';
+import { ConditionExpression, contains, ContainsPredicate } from '@aws/dynamodb-expressions';
 
 export class UserRepository extends Repository {
 
@@ -41,6 +42,40 @@ export class UserRepository extends Repository {
 		};
 	}
 
+	public async searchByText(searchText: string, lastEvaluatedKey?: LastEvaluatedKey): Promise<{ users: User[]; lastEvaluatedKey: Partial<UserItem> }> {
+		const predicate: ContainsPredicate = contains(searchText);
+
+		const expression: ConditionExpression = {
+			...predicate,
+			subject: 'searchText'
+		};
+
+		const keyCondition: QueryKey = {
+			entity: 'user'
+		};
+		const queryOptions: QueryOptions = {
+			indexName: 'entity-sk2-index',
+			scanIndexForward: false,
+			startKey: lastEvaluatedKey,
+			filter: expression,
+			limit: 10
+		};
+
+		const queryPages: QueryPaginator<UserItem> = this.db.query(UserItem, keyCondition, queryOptions).pages();
+		const users: User[] = [];
+		for await (const page of queryPages) {
+			for (const user of page)
+				users.push(user);
+		}
+		return {
+			users,
+			lastEvaluatedKey:
+				queryPages.lastEvaluatedKey ?
+					queryPages.lastEvaluatedKey :
+					undefined
+		};
+	}
+
 	public async getById(userId: string, otherUser?: boolean): Promise<User> {
 		const options: GetOptions = otherUser ? {
 			projection: [ 'userId', 'firstName', 'lastName', 'avatar', 'userType' ]
@@ -53,11 +88,13 @@ export class UserRepository extends Repository {
 
 	public async createAfterSignUp(userId: string, toCreate: Partial<User>): Promise<User> {
 		const date: string = new Date().toISOString();
+		const searchText: string = `${toCreate.email} ${toCreate.firstName} ${toCreate.lastName}`;
 
 		return this.db.put(Object.assign(new UserItem(), {
 			userId,
 			pk: `user#${userId}`,
 			sk: `user#${userId}`,
+			sk2: `user#${userId}`,
 			entity: 'user',
 			confirmed: false,
 			accountBalance: 0,
@@ -65,6 +102,7 @@ export class UserRepository extends Repository {
 				createdAt: date
 			},
 			connections: [],
+			searchText,
 			...toCreate
 		}));
 	}
