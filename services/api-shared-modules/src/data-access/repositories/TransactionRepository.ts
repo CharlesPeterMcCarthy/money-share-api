@@ -9,7 +9,7 @@ import { beginsWith } from '@aws/dynamodb-expressions';
 
 export class TransactionRepository extends Repository {
 
-	public async getAll(userId: string, lastEvaluatedKey?: LastEvaluatedKey): Promise<{ transactions: Transaction[]; lastEvaluatedKey: Partial<TransactionItem> }> {
+	public async getAll(userId: string, limit?: number, lastEvaluatedKey?: LastEvaluatedKey): Promise<{ transactions: Transaction[]; lastEvaluatedKey: Partial<TransactionItem> }> {
 		const keyCondition: QueryKey = {
 			entity: 'transaction',
 			sk2: beginsWith(`user#${userId}`)
@@ -17,9 +17,10 @@ export class TransactionRepository extends Repository {
 		const queryOptions: QueryOptions = {
 			indexName: 'entity-sk2-index',
 			scanIndexForward: false,
-			startKey: lastEvaluatedKey,
-			limit: 10
+			startKey: lastEvaluatedKey
 		};
+
+		if (limit) queryOptions.limit = limit;
 
 		const queryPages: QueryPaginator<TransactionItem> = this.db.query(TransactionItem, keyCondition, queryOptions).pages();
 		const transactions: Transaction[] = [];
@@ -34,6 +35,26 @@ export class TransactionRepository extends Repository {
 					queryPages.lastEvaluatedKey :
 					undefined
 		};
+	}
+
+	public async getLast(userId: string, limit: number): Promise<Transaction[]> {
+		const keyCondition: QueryKey = {
+			entity: 'transaction',
+			sk2: beginsWith(`user#${userId}`)
+		};
+		const queryOptions: QueryOptions = {
+			indexName: 'entity-sk2-index',
+			scanIndexForward: false,
+			limit
+		};
+
+		const queryPages: QueryPaginator<TransactionItem> = this.db.query(TransactionItem, keyCondition, queryOptions).pages();
+		const transactions: Transaction[] = [];
+		for await (const page of queryPages) {
+			for (const transaction of page)
+				transactions.push(transaction);
+		}
+		return transactions;
 	}
 
 	public async create(userId: string, transaction: Partial<Transaction>): Promise<Transaction> {

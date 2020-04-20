@@ -102,7 +102,7 @@ export class UserController {
 			const user: User = await this.unitOfWork.Users.getById(userId);
 			if (!user) return ResponseBuilder.notFound(ErrorCode.InvalidId, 'User not found');
 
-			const result: { users: User[]; lastEvaluatedKey: Partial<UserItem> } = await this.unitOfWork.Users.searchByText(searchText);
+			const result: { users: User[]; lastEvaluatedKey: Partial<UserItem> } = await this.unitOfWork.Users.searchByText(userId, searchText);
 
 			return ResponseBuilder.ok({ ...result });
 		} catch (err) {

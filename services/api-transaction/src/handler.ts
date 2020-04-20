@@ -5,3 +5,5 @@ const unitOfWork: UnitOfWork = new UnitOfWork();
 const controller: TransactionController = new TransactionController(unitOfWork);
 
 export const getAllTransactions: ApiHandler = controller.getAllTransactions;
+export const getTransactionPreview: ApiHandler = controller.getTransactionPreview;
+export const getGraphData: ApiHandler = controller.getGraphData;

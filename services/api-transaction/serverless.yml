@@ -45,6 +45,22 @@ functions:
           method: post
           cors: true
           authorizer: aws_iam
+  getTransactionPreview:
+    handler: src/handler.getTransactionPreview
+    events:
+      - http:
+          path: /transaction/preview
+          method: get
+          cors: true
+          authorizer: aws_iam
+  getGraphData:
+    handler: src/handler.getGraphData
+    events:
+      - http:
+          path: /transaction/graph-data
+          method: get
+          cors: true
+          authorizer: aws_iam
 
 resources:
     - ${file(../resources/cognito-policy.yml)}

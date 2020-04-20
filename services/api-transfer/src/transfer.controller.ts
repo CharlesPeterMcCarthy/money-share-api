@@ -8,7 +8,7 @@ import {
 	UnitOfWork,
 	SharedFunctions
 } from '../../api-shared-modules/src';
-import { Transaction, Transfer, User } from '@moneyshare/common-types';
+import { Transaction, Transfer, User, UserBrief } from '@moneyshare/common-types';
 import { CreateTransferData } from './interfaces';
 
 export class TransferController {
@@ -35,7 +35,13 @@ export class TransferController {
 
 			if (transfer.amount > user.accountBalance) return ResponseBuilder.badRequest(ErrorCode.BadRequest, 'Insufficient Funds');
 
+			const recipientBrief: UserBrief = await this.unitOfWork.Users.getUserBrief(transfer.recipientUserId);
+			const previousRecipient: number = user.recentRecipients.findIndex(((r: UserBrief): boolean => r.userId === transfer.recipientUserId));
+			if (previousRecipient > -1) user.recentRecipients.splice(previousRecipient, 1);
+
+			user.recentRecipients.unshift(recipientBrief);
 			user.accountBalance = (user.accountBalance || 0) - transfer.amount;
+
 			await this.unitOfWork.Users.update(user.userId, user);
 
 			const recipient: User = await this.unitOfWork.Users.getById(transfer.recipientUserId);

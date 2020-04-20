@@ -1,6 +1,6 @@
 import { DynamoDbItem } from '../DynamoDBItem';
 import { attribute } from '@aws/dynamodb-data-mapper-annotations';
-import { User, UserConnection, UserType } from '@moneyshare/common-types';
+import { User, UserBrief, UserConnection, UserType } from '@moneyshare/common-types';
 
 export class UserItem extends DynamoDbItem implements User {
 
@@ -43,5 +43,8 @@ export class UserItem extends DynamoDbItem implements User {
 
 	@attribute()
 	public searchText: string;
+
+	@attribute()
+	public recentRecipients: UserBrief[];
 
 }
