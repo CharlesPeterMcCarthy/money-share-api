@@ -37,6 +37,14 @@ plugins:
   - serverless-webpack
 
 functions:
+  getAllDeposits:
+    handler: src/handler.getAllDeposits
+    events:
+      - http:
+          path: /deposit
+          method: get
+          cors: true
+          authorizer: aws_iam
   depositBegin:
     handler: src/handler.depositBegin
     events:

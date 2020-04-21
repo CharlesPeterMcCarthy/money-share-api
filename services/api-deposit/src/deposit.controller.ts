@@ -6,7 +6,9 @@ import {
 	ApiEvent,
 	ApiContext,
 	UnitOfWork,
-	SharedFunctions
+	SharedFunctions,
+	LastEvaluatedKey,
+	DepositItem
 } from '../../api-shared-modules/src';
 import { Deposit, PaymentIntent, Transaction, User } from '@moneyshare/common-types';
 import Stripe from 'stripe';
@@ -17,6 +19,36 @@ export class DepositController {
 		private unitOfWork: UnitOfWork,
 		private stripe: Stripe
 	) { }
+
+	public getAllDeposits: ApiHandler = async (event: ApiEvent, context: ApiContext): Promise<ApiResponse> => {
+		let lastEvaluatedKey: LastEvaluatedKey;
+		const data: any = JSON.parse(event.body);
+
+		if (data && data.lastEvaluatedKey) {
+			const { pk, sk, sk2, entity }: LastEvaluatedKey = data.lastEvaluatedKey;
+			lastEvaluatedKey = {
+				pk,
+				sk,
+				sk2,
+				entity
+			};
+		}
+
+		try {
+			const userId: string = SharedFunctions.getUserIdFromAuthProvider(event);
+			const user: User = await this.unitOfWork.Users.getById(userId);
+			if (!user) return ResponseBuilder.notFound(ErrorCode.InvalidId, 'User Not Found');
+
+			const result: { deposits: Deposit[]; lastEvaluatedKey: Partial<DepositItem> } =
+				await this.unitOfWork.Deposits.getAll(userId, 10, lastEvaluatedKey);
+			if (!result) return ResponseBuilder.notFound(ErrorCode.GeneralError, 'Failed to retrieve Deposits');
+
+			return ResponseBuilder.ok({ ...result, count: result.deposits.length });
+		} catch (err) {
+			return ResponseBuilder.internalServerError(err, err.message);
+		}
+
+	}
 
 	public depositBegin: ApiHandler = async (event: ApiEvent, context: ApiContext): Promise<ApiResponse> => {
 		if (!event.pathParameters || !event.pathParameters.amount)

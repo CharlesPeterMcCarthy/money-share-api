@@ -44,7 +44,6 @@ export class TransactionController {
 		} catch (err) {
 			return ResponseBuilder.internalServerError(err, err.message);
 		}
-
 	}
 
 	public getTransactionPreview: ApiHandler = async (event: ApiEvent, context: ApiContext): Promise<ApiResponse> => {

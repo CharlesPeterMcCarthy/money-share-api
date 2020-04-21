@@ -10,5 +10,6 @@ const stripe: Stripe = new Stripe(STRIPE_API_KEY, {
 const unitOfWork: UnitOfWork = new UnitOfWork();
 const controller: DepositController = new DepositController(unitOfWork, stripe);
 
+export const getAllDeposits: ApiHandler = controller.getAllDeposits;
 export const depositBegin: ApiHandler = controller.depositBegin;
 export const depositComplete: ApiHandler = controller.depositComplete;

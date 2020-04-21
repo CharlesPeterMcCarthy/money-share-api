@@ -55,6 +55,7 @@ export class TransferController {
 				amount: completeTransfer.amount,
 				newBalance: user.accountBalance,
 				text: `You sent €${(completeTransfer.amount / 100).toFixed(2)} to ${recipient.firstName} ${recipient.lastName}`,
+				message: completeTransfer.message,
 				accessKey: {
 					pk: completeTransfer.pk,
 					sk: completeTransfer.sk
@@ -68,6 +69,7 @@ export class TransferController {
 				amount: completeTransfer.amount,
 				newBalance: recipient.accountBalance,
 				text: `You received €${(completeTransfer.amount / 100).toFixed(2)} from ${user.firstName} ${user.lastName}`,
+				message: completeTransfer.message,
 				accessKey: {
 					pk: completeTransfer.pk,
 					sk: completeTransfer.sk
