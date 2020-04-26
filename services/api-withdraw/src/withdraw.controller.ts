@@ -6,7 +6,8 @@ import {
 	ApiEvent,
 	ApiContext,
 	UnitOfWork,
-	SharedFunctions
+	SharedFunctions,
+	LastEvaluatedKey
 } from '../../api-shared-modules/src';
 import { Transaction, User, Withdrawal } from '@moneyshare/common-types';
 
@@ -15,6 +16,35 @@ export class WithdrawController {
 	public constructor(
 		private unitOfWork: UnitOfWork
 	) { }
+
+	public getAllWithdrawals: ApiHandler = async (event: ApiEvent, context: ApiContext): Promise<ApiResponse> => {
+		let lastEvaluatedKey: LastEvaluatedKey;
+		const data: any = JSON.parse(event.body);
+
+		if (data && data.lastEvaluatedKey) {
+			const { pk, sk, sk2, entity }: LastEvaluatedKey = data.lastEvaluatedKey;
+			lastEvaluatedKey = {
+				pk,
+				sk,
+				sk2,
+				entity
+			};
+		}
+
+		try {
+			const userId: string = SharedFunctions.getUserIdFromAuthProvider(event);
+			const user: User = await this.unitOfWork.Users.getById(userId);
+			if (!user) return ResponseBuilder.notFound(ErrorCode.InvalidId, 'User Not Found');
+
+			const result: { withdrawals: Withdrawal[]; lastEvaluatedKey: LastEvaluatedKey } =
+				await this.unitOfWork.Withdrawals.getAll(userId, 10, lastEvaluatedKey);
+			if (!result) return ResponseBuilder.notFound(ErrorCode.GeneralError, 'Failed to retrieve Withdrawals');
+
+			return ResponseBuilder.ok({ ...result, count: result.withdrawals.length });
+		} catch (err) {
+			return ResponseBuilder.internalServerError(err, err.message);
+		}
+	}
 
 	public withdraw: ApiHandler = async (event: ApiEvent, context: ApiContext): Promise<ApiResponse> => {
 		if (!event.pathParameters || !event.pathParameters.amount)

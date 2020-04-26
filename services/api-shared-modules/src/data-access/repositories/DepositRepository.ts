@@ -9,7 +9,7 @@ import { QueryOptions, QueryPaginator } from '@aws/dynamodb-data-mapper';
 
 export class DepositRepository extends Repository {
 
-	public async getAll(userId: string, limit?: number, lastEvaluatedKey?: LastEvaluatedKey): Promise<{ deposits: Deposit[]; lastEvaluatedKey: Partial<DepositItem> }> {
+	public async getAll(userId: string, limit?: number, lastEvaluatedKey?: LastEvaluatedKey): Promise<{ deposits: Deposit[]; lastEvaluatedKey: Partial<LastEvaluatedKey> }> {
 		const keyCondition: QueryKey = {
 			entity: 'deposit',
 			sk: beginsWith(`user#${userId}`)

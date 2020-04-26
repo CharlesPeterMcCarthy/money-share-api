@@ -42,7 +42,7 @@ functions:
     events:
       - http:
           path: /deposit
-          method: get
+          method: post
           cors: true
           authorizer: aws_iam
   depositBegin:

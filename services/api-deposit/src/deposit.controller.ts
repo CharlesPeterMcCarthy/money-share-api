@@ -7,8 +7,7 @@ import {
 	ApiContext,
 	UnitOfWork,
 	SharedFunctions,
-	LastEvaluatedKey,
-	DepositItem
+	LastEvaluatedKey
 } from '../../api-shared-modules/src';
 import { Deposit, PaymentIntent, Transaction, User } from '@moneyshare/common-types';
 import Stripe from 'stripe';
@@ -39,7 +38,7 @@ export class DepositController {
 			const user: User = await this.unitOfWork.Users.getById(userId);
 			if (!user) return ResponseBuilder.notFound(ErrorCode.InvalidId, 'User Not Found');
 
-			const result: { deposits: Deposit[]; lastEvaluatedKey: Partial<DepositItem> } =
+			const result: { deposits: Deposit[]; lastEvaluatedKey: Partial<LastEvaluatedKey> } =
 				await this.unitOfWork.Deposits.getAll(userId, 10, lastEvaluatedKey);
 			if (!result) return ResponseBuilder.notFound(ErrorCode.GeneralError, 'Failed to retrieve Deposits');
 
@@ -47,7 +46,6 @@ export class DepositController {
 		} catch (err) {
 			return ResponseBuilder.internalServerError(err, err.message);
 		}
-
 	}
 
 	public depositBegin: ApiHandler = async (event: ApiEvent, context: ApiContext): Promise<ApiResponse> => {

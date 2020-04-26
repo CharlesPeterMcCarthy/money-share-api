@@ -9,7 +9,7 @@ import { beginsWith } from '@aws/dynamodb-expressions';
 
 export class TransactionRepository extends Repository {
 
-	public async getAll(userId: string, limit?: number, lastEvaluatedKey?: LastEvaluatedKey): Promise<{ transactions: Transaction[]; lastEvaluatedKey: Partial<TransactionItem> }> {
+	public async getAll(userId: string, limit?: number, lastEvaluatedKey?: LastEvaluatedKey): Promise<{ transactions: Transaction[]; lastEvaluatedKey: Partial<LastEvaluatedKey> }> {
 		const keyCondition: QueryKey = {
 			entity: 'transaction',
 			sk2: beginsWith(`user#${userId}`)

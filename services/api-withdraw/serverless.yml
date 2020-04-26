@@ -37,6 +37,14 @@ plugins:
   - serverless-webpack
 
 functions:
+  getAllWithdrawals:
+    handler: src/handler.getAllWithdrawals
+    events:
+      - http:
+          path: /withdraw
+          method: post
+          cors: true
+          authorizer: aws_iam
   withdraw:
     handler: src/handler.withdraw
     events:

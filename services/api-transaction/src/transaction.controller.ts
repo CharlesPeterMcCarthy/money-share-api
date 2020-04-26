@@ -72,7 +72,7 @@ export class TransactionController {
 
 			const transactions: Transaction[] = result.transactions;
 
-			const data: GraphPoint[] = transactions.map((t: Transaction) => ({
+			const data: GraphPoint[] = transactions.reverse().map((t: Transaction) => ({
 				y: t.newBalance / 100
 				// indexLabel: `€${(t.newBalance / 100).toFixed(2)}`
 			}));
