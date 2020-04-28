@@ -53,22 +53,6 @@ export class AuthController {
 
 			await this.unitOfWork.Users.createAfterSignUp(cognitoUser.sub, { ...user });
 
-			// const account: Stripe.CustomerSource = await this.stripe.customers.createSource(
-			// 	customer.id,
-			// 	{ source: 'tok_1GYaptJbUq0YkNoHWuekK8Ms' }
-			// );
-			//
-			// console.log(account);
-			//
-			// const transfer: Stripe.Transfer = await this.stripe.transfers.create(
-			// 	{
-			// 		amount: 2500,
-			// 		currency: 'eur',
-			// 		destination: 'acct_1GVhXUJbUq0YkNoH',
-			// 		transfer_group: 'ORDER_95',
-			// 	}
-			// );
-
 			return event;
 		} catch (err) {
 			console.log(err);

@@ -43,7 +43,7 @@ export class UserRepository extends Repository {
 	}
 
 	public async searchByText(currentUserId: string, searchText: string, lastEvaluatedKey?: LastEvaluatedKey): Promise<{ users: User[]; lastEvaluatedKey: Partial<UserItem> }> {
-		const predicate: ContainsPredicate = contains(searchText);
+		const predicate: ContainsPredicate = contains(searchText.toLowerCase());
 		const nePredicate: InequalityExpressionPredicate = notEquals(currentUserId);
 
 		const expression: ConditionExpression = {
@@ -108,7 +108,7 @@ export class UserRepository extends Repository {
 
 	public async createAfterSignUp(userId: string, toCreate: Partial<User>): Promise<User> {
 		const date: string = new Date().toISOString();
-		const searchText: string = `${toCreate.email} ${toCreate.firstName} ${toCreate.lastName}`;
+		const searchText: string = `${toCreate.email} ${toCreate.firstName} ${toCreate.lastName}`.toLowerCase();
 
 		return this.db.put(Object.assign(new UserItem(), {
 			userId,
