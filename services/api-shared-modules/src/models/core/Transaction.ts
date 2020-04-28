@@ -20,6 +20,9 @@ export class TransactionItem extends DynamoDbItem implements Transaction {
 	public newBalance!: number;
 
 	@attribute()
+	public message?: string;
+
+	@attribute()
 	public accessKey: {
 		pk: string;
 		sk: string;
